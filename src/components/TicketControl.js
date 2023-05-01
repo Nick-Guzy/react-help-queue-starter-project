@@ -24,7 +24,7 @@ function TicketControl() {
   const handleDeletingTicket = (id) => {
     const newMainTicketList = mainTicketList.filter(ticket => ticket.id !== id);
     setMainTicketList(newMainTicketList);
-    serSelectedTicket(null);
+    setSelectedTicket(null);
   }
 
   const handleEditClick = () => {
