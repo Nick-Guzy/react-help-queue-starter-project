@@ -4,7 +4,7 @@ import TicketList from './TicketList';
 import EditTicketForm from './EditTicketForm';
 import TicketDetail from './TicketDetail';
 import db from './../firebase.js';
-import { collection, addDoc, onSnapshot, deleteDoc } from "firebase/firestore";
+import { collection, addDoc, onSnapshot, doc, deleteDoc, updateDoc } from "firebase/firestore";
 
 function TicketControl() {
 
@@ -47,26 +47,27 @@ function TicketControl() {
       setFormVisibleOnPage(!formVisibleOnPage);
     }
   }
-
-  const handleDeletingTicket = (id) => {
-    const newMainTicketList = mainTicketList.filter(ticket => ticket.id !== id);
-    setMainTicketList(newMainTicketList);
-    setSelectedTicket(null);
-  }
+  
+  // commented out after re-writing it to use the firestore
+  // const handleDeletingTicket = (id) => {
+  //   const newMainTicketList = mainTicketList.filter(ticket => ticket.id !== id);
+  //   setMainTicketList(newMainTicketList);
+  //   setSelectedTicket(null);
+  // }
 
   const handleEditClick = () => {
     setEditing(true);
   }
-
-  const handleEditingTicketInList = (ticketToEdit) => {
-    const editedMainTicketList = mainTicketList
-    selectedTicket.id
-      .filter(ticket => ticket.id !== selectedTicket.id)
-      .concat(ticketToEdit);
-      setMainTicketList(editedMainTicketList);
-      setEditing(false);
-      setSelectedTicket(null);
-  }
+  // commented out after re-writing it to use the firestore
+  // const handleEditingTicketInList = (ticketToEdit) => {
+  //   const editedMainTicketList = mainTicketList
+  //   selectedTicket.id
+  //     .filter(ticket => ticket.id !== selectedTicket.id)
+  //     .concat(ticketToEdit);
+  //     setMainTicketList(editedMainTicketList);
+  //     setEditing(false);
+  //     setSelectedTicket(null);
+  // }
 
   // commented out after re-writing it to use the firestore
   // const handleAddingNewTicketToList = (newTicket) => {
@@ -74,6 +75,18 @@ function TicketControl() {
   //   setMainTicketList(newMainTicketList);
   //   setFormVisibleOnPage(false)
   // }
+
+  const handleDeletingTicket = async (id) => {
+    await deleteDoc(doc(db, "tickets", id));
+    setSelectedTicket(null);
+  } 
+
+  const handleEditingTicketInList = async (ticketToEdit) => {
+    const ticketRef = doc(db, "tickets", ticketToEdit.id);
+    await updateDoc(ticketRef, ticketToEdit);
+    setEditing(false);
+    setSelectedTicket(null);
+  }
 
   const handleAddingNewTicketToList = async (newTicketData) => {
     await addDoc(collection(db, "tickets"), newTicketData);
